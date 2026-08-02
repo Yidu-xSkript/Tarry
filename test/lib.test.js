@@ -30,3 +30,43 @@ test('the wait never releases, no matter how long you sit', () => {
   const m = movementById('wait');
   assert.deepEqual(releaseState(m, 10 * 60 * 60 * 1000), { released: false, label: null });
 });
+
+import { addEntry, answerEntry, testimonies, byTag, toPlainText } from '../lib.js';
+
+const seed = () => addEntry([], {
+  id: 'a', created: '2026-03-04', text: 'For my brother', tag: 'burden',
+});
+
+test('an entry starts unanswered', () => {
+  const [e] = seed();
+  assert.equal(e.answer, null);
+  assert.equal(e.tag, 'burden');
+});
+
+test('answering attaches the testimony and its date', () => {
+  const entries = answerEntry(seed(), 'a', 'He came home.', '2026-09-19');
+  assert.deepEqual(entries[0].answer, { text: 'He came home.', date: '2026-09-19' });
+  assert.equal(entries[0].created, '2026-03-04', 'the original must not be rewritten');
+});
+
+test('testimonies lists only answered entries, newest first', () => {
+  let entries = addEntry(seed(), { id: 'b', created: '2026-04-01', text: 'unanswered' });
+  entries = addEntry(entries, { id: 'c', created: '2026-01-01', text: 'older' });
+  entries = answerEntry(entries, 'a', 'He came home.', '2026-09-19');
+  entries = answerEntry(entries, 'c', 'He provided.', '2026-11-02');
+  assert.deepEqual(testimonies(entries).map(e => e.id), ['c', 'a']);
+});
+
+test('byTag filters, and a null tag returns everything', () => {
+  const entries = addEntry(seed(), { id: 'd', created: '2026-04-01', text: 'a dream', tag: 'dream' });
+  assert.deepEqual(byTag(entries, 'dream').map(e => e.id), ['d']);
+  assert.equal(byTag(entries, null).length, 2);
+});
+
+test('export includes the burden, its testimony, and both dates', () => {
+  const out = toPlainText(answerEntry(seed(), 'a', 'He came home.', '2026-09-19'));
+  assert.match(out, /2026-03-04/);
+  assert.match(out, /For my brother/);
+  assert.match(out, /2026-09-19/);
+  assert.match(out, /He came home\./);
+});

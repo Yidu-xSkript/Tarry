@@ -40,3 +40,31 @@ export function releaseState(movement, elapsedMs) {
   if (elapsedMs < movement.floor * 1000) return { released: false, label: null };
   return { released: true, label: movement.release ?? 'continue' };
 }
+
+export const TAGS = ['prayer', 'burden', 'dream', 'word', 'conviction'];
+
+export function addEntry(entries, { id, created, text, tag = null, scripture = null }) {
+  return [...entries, { id, created, text, tag, scripture, answer: null }];
+}
+
+export function answerEntry(entries, id, text, date) {
+  return entries.map(e => (e.id === id ? { ...e, answer: { text, date } } : e));
+}
+
+export function testimonies(entries) {
+  return entries.filter(e => e.answer)
+    .sort((a, b) => b.answer.date.localeCompare(a.answer.date));
+}
+
+export function byTag(entries, tag) {
+  return tag ? entries.filter(e => e.tag === tag) : entries;
+}
+
+export function toPlainText(entries) {
+  return entries.map(e => {
+    const head = `${e.created}${e.tag ? `  [${e.tag}]` : ''}\n${e.text}`;
+    const scripture = e.scripture ? `\n\n  ${e.scripture.text}\n  — ${e.scripture.ref} (${e.scripture.version})` : '';
+    const answer = e.answer ? `\n\n  ANSWERED ${e.answer.date}\n  ${e.answer.text}` : '';
+    return `${head}${scripture}${answer}`;
+  }).join('\n\n———\n\n');
+}
