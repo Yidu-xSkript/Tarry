@@ -1,4 +1,4 @@
-const CACHE = 'tarry-v5';
+const CACHE = 'tarry-v6';
 // ponytail: precache the shell, the two small lookup files, and psalm — the only
 // book a prayer session itself opens. The other 130 book files are ~34 MB raw and
 // are cached individually on first visit by the fetch handler below, so install
@@ -23,10 +23,16 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
   e.respondWith(
-    caches.match(e.request).then(hit => hit || fetch(e.request).then(res => {
-      const copy = res.clone();
-      caches.open(CACHE).then(c => c.put(e.request, copy));
-      return res;
-    }).catch(() => hit))
+    caches.match(e.request).then(hit => {
+      if (hit) return hit;
+      // Do NOT swallow a failed fetch here. The old code fell back to `hit`,
+      // which is undefined on this branch, so respondWith resolved to undefined
+      // and the page saw an opaque network error with nothing to diagnose.
+      return fetch(e.request).then(res => {
+        const copy = res.clone();
+        caches.open(CACHE).then(c => c.put(e.request, copy));
+        return res;
+      });
+    })
   );
 });

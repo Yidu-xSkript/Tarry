@@ -310,13 +310,21 @@ async function goTo(book, chapter, verse) {
 fillSelect($('#sel-book'), BOOKS.map(b => b.key), bookName);
 $('#sel-book').value = 'john';
 
-$('#sel-book').addEventListener('change', async () => {
-  await fillChapters(); await fillVerses(); openStudy();
-});
-$('#sel-chapter').addEventListener('change', async () => {
-  await fillVerses(); openStudy();
-});
-$('#sel-verse').addEventListener('change', openStudy);
+// ponytail: one wrapper so a failed fetch lands on screen instead of dying
+// silently in an unhandled promise rejection. Invisible failure is the worst
+// kind — it looks like the feature was never built.
+const guarded = fn => async (...args) => {
+  try { await fn(...args); }
+  catch (err) { $('#study-cols').textContent = `Could not load the text: ${err.message}`; }
+};
+
+$('#sel-book').addEventListener('change', guarded(async () => {
+  await fillChapters(); await fillVerses(); await openStudy();
+}));
+$('#sel-chapter').addEventListener('change', guarded(async () => {
+  await fillVerses(); await openStudy();
+}));
+$('#sel-verse').addEventListener('change', guarded(openStudy));
 
 async function openStudy() {
   const ref = currentRef();
@@ -343,13 +351,15 @@ async function openStudy() {
   await renderXrefs(ref);
 }
 
-// First time Study is opened, land somewhere rather than on a blank screen.
-document.querySelector('[data-goto="study"]').addEventListener('click', async () => {
-  if ($('#sel-chapter').options.length) return;
-  await fillChapters('3');
-  await fillVerses('16');
-  openStudy();
-});
+// Opening Study fills the chapter and verse menus. Selecting a book that is
+// already selected fires no change event, so this cannot be left to the user.
+document.querySelector('[data-goto="study"]').addEventListener('click', guarded(async () => {
+  if (!$('#sel-chapter').options.length) {
+    await fillChapters('3');
+    await fillVerses('16');
+  }
+  await openStudy();
+}));
 
 let xrefs = null;
 async function loadXrefs() {
