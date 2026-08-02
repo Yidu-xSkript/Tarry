@@ -176,3 +176,20 @@ function renderTestimonies() {
 
 document.querySelector('[data-goto="journal"]').addEventListener('click', () => openComposer());
 document.querySelector('[data-goto="testimony"]').addEventListener('click', renderTestimonies);
+
+function download(filename, text, type) {
+  const url = URL.createObjectURL(new Blob([text], { type }));
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+$('#export').addEventListener('click', () => {
+  download(`tarry-${today()}.txt`, toPlainText(load()), 'text/plain');
+});
+
+$('#make-ics').addEventListener('click', () => {
+  const start = today().replaceAll('-', '');
+  download('tarry.ics', icsFor($('#reminder-time').value, start), 'text/calendar');
+});
