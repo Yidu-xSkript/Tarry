@@ -305,6 +305,9 @@ async function goTo(book, chapter, verse) {
   await fillChapters(chapter);
   await fillVerses(verse);
   await openStudy();
+  // The cross references sit below the text, so a jump made from down there
+  // renders off-screen and looks like nothing happened.
+  window.scrollTo(0, 0);
 }
 
 fillSelect($('#sel-book'), BOOKS.map(b => b.key), bookName);
@@ -330,6 +333,10 @@ async function openStudy() {
   const ref = currentRef();
   const cols = $('#study-cols');
   cols.innerHTML = '';
+
+  // Say plainly where we are. Without it, a jump to another passage is silent.
+  const human = `${bookName(ref.book)} ${ref.chapter}${ref.verse ? `:${ref.verse}` : ''}`;
+  $('#study-where').textContent = human;
 
   // Bible Gateway wants a human reference, not our filename key.
   $('#amp-link').href = bibleGatewayUrl({ ...ref, book: bookName(ref.book) });
