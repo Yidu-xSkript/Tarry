@@ -70,3 +70,22 @@ test('export includes the burden, its testimony, and both dates', () => {
   assert.match(out, /2026-09-19/);
   assert.match(out, /He came home\./);
 });
+
+import { icsFor } from '../lib.js';
+
+test('the calendar file repeats daily with an alarm at the chosen time', () => {
+  const ics = icsFor('05:30', '20260803');
+  assert.match(ics, /^BEGIN:VCALENDAR/);
+  assert.match(ics, /RRULE:FREQ=DAILY/);
+  assert.match(ics, /DTSTART:20260803T053000/);
+  assert.match(ics, /BEGIN:VALARM[\s\S]*TRIGGER:PT0M[\s\S]*END:VALARM/);
+  assert.match(ics, /END:VCALENDAR$/);
+});
+
+test('single-digit hours are zero-padded', () => {
+  assert.match(icsFor('5:05', '20260803'), /DTSTART:20260803T050500/);
+});
+
+test('lines are CRLF terminated as the iCalendar spec requires', () => {
+  assert.ok(icsFor('05:30', '20260803').includes('\r\n'));
+});

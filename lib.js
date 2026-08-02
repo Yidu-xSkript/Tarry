@@ -68,3 +68,33 @@ export function toPlainText(entries) {
     return `${head}${scripture}${answer}`;
   }).join('\n\n———\n\n');
 }
+
+// ponytail: iOS gives a web app no way to schedule a local notification, so we
+// hand the job to the Calendar app, which already does it reliably and offline.
+// Upgrade path if this proves insufficient: a native iOS app with
+// UNUserNotificationCenter — nothing short of that is more reliable.
+export function icsFor(hhmm, startYYYYMMDD, { uid = 'tarry-daily@local', title = 'Tarry' } = {}) {
+  const [h, m] = hhmm.split(':');
+  const pad = n => String(n).padStart(2, '0');
+  const start = `${startYYYYMMDD}T${pad(h)}${pad(m)}00`;
+  return [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Tarry//EN',
+    'CALSCALE:GREGORIAN',
+    'BEGIN:VEVENT',
+    `UID:${uid}`,
+    `DTSTAMP:${startYYYYMMDD}T000000Z`,
+    `DTSTART:${start}`,
+    'DURATION:PT45M',
+    'RRULE:FREQ=DAILY',
+    `SUMMARY:${title}`,
+    'BEGIN:VALARM',
+    'TRIGGER:PT0M',
+    'ACTION:DISPLAY',
+    'DESCRIPTION:Tarry',
+    'END:VALARM',
+    'END:VEVENT',
+    'END:VCALENDAR',
+  ].join('\r\n');
+}
