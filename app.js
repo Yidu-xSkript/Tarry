@@ -193,3 +193,5 @@ $('#make-ics').addEventListener('click', () => {
   const start = today().replaceAll('-', '');
   download('tarry.ics', icsFor($('#reminder-time').value, start), 'text/calendar');
 });
+
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
