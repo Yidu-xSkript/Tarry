@@ -69,9 +69,27 @@ $('#he-spoke').addEventListener('click', () => {
   openComposer();
 });
 
-// Placeholder until Task 12 wires real Bible data.
-async function loadSessionPassage(ref) {
-  $('#m-passage').textContent = '';
+let VERSIONS = {};
+fetch('data/VERSIONS.json').then(r => r.json()).then(v => { VERSIONS = v; }).catch(() => {});
+
+let sessionScripture = null;   // snapshotted onto any entry written this session
+
+async function loadSessionPassage(refString) {
+  const ref = parseRef(refString);
+  if (!ref?.verse) return;
+  try {
+    const book = await loadBook('bsb', ref);
+    const text = plainVerse(book[ref.chapter], ref.verse);
+    if (!text) return;
+    // Deliberately plain text, not tokens: nothing here is tappable. Study is a
+    // different activity and must not follow you onto the altar.
+    $('#m-passage').textContent = text;
+    sessionScripture = {
+      text,
+      ref: `${ref.book} ${ref.chapter}:${ref.verse}`,
+      version: VERSIONS.bsb?.name ?? 'bsb',
+    };
+  } catch { /* no signal and not yet cached; the movement still works without it */ }
 }
 
 const KEY = 'tarry.entries';
@@ -119,7 +137,7 @@ $('#save-entry').addEventListener('click', () => {
   if (!text) return;
   const entries = answeringId
     ? answerEntry(load(), answeringId, text, today())
-    : addEntry(load(), { id: newId(), created: today(), text, tag: pendingTag });
+    : addEntry(load(), { id: newId(), created: today(), text, tag: pendingTag, scripture: sessionScripture });
   save(entries);
   answeringId = null;
   $('#entry-text').value = '';
@@ -196,7 +214,7 @@ $('#make-ics').addEventListener('click', () => {
 
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 
-import { parseRef, refToPath, bibleGatewayUrl } from './lib.js';
+import { parseRef, refToPath, bibleGatewayUrl, plainVerse } from './lib.js';
 
 const bookCache = new Map();
 
