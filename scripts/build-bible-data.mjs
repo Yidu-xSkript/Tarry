@@ -208,6 +208,16 @@ function parseBsb(txtPath) {
 // contract, and kjv_def duplicates what the KJV verse text already shows.
 // ---------------------------------------------------------------------------
 
+// ponytail: the upstream dataset mis-splits a handful of entries, putting the
+// real gloss in `derivation` and leaving a trailing fragment in `strongs_def`.
+// G2316 (θεός, "God") is the one that matters — it is the most-tapped word in
+// the book, and unpatched it reads "figuratively, a magistrate; by Hebraism,
+// very". Fixing one entry by hand beats a heuristic that could corrupt the
+// other 14,196. Add a line here if another bad entry turns up.
+const DEF_OVERRIDES = {
+  G2316: 'a deity, especially the supreme Divinity; figuratively, a magistrate',
+};
+
 function parseStrongsFile(jsPath, translitField) {
   const raw = fs.readFileSync(jsPath, 'utf8');
   const start = raw.indexOf('{');
@@ -219,7 +229,7 @@ function parseStrongsFile(jsPath, translitField) {
     out[code] = {
       lemma: entry.lemma ?? '',
       translit: entry[translitField] ?? '',
-      def: (entry.strongs_def ?? '').trim(),
+      def: DEF_OVERRIDES[code] ?? (entry.strongs_def ?? '').trim(),
     };
   }
   return out;
