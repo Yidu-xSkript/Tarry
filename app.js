@@ -1,6 +1,12 @@
 import { MOVEMENTS, releaseState, TAGS, addEntry, answerEntry,
          testimonies, byTag, toPlainText, icsFor } from './lib.js';
 
+// ponytail: ?fast=2 shrinks every floor to 2 seconds so the whole altar can be
+// walked in a minute. The Wait still never releases — that is not a floor.
+// Ship-safe: without the query param the real floors are untouched.
+const fast = Number(new URLSearchParams(location.search).get('fast'));
+if (fast > 0) MOVEMENTS.forEach(m => { if (m.floor !== null) m.floor = fast; });
+
 const $ = sel => document.querySelector(sel);
 const screens = [...document.querySelectorAll('.screen')];
 
