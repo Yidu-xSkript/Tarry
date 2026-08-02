@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<title>Tarry</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-512.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<section id="home" class="screen">
+  <h1>Tarry</h1>
+  <p class="verse">"Tarry ye in the city of Jerusalem,<br>until ye be endued with power from on high."<br><span>Luke 24:49</span></p>
+  <button id="begin" class="primary">Begin</button>
+  <nav>
+    <button data-goto="journal">Write</button>
+    <button data-goto="testimony">Testimonies</button>
+    <button data-goto="study">Study</button>
+    <button data-goto="settings">Settings</button>
+  </nav>
+</section>
+
+<section id="session" class="screen" hidden>
+  <h2 id="m-title"></h2>
+  <p id="m-body"></p>
+  <div id="m-passage"></div>
+  <button id="release" class="release" hidden></button>
+  <button id="he-spoke" class="release" hidden>He spoke</button>
+</section>
+
+<section id="journal" class="screen" hidden>
+  <h2>Write</h2>
+  <textarea id="entry-text" rows="10" placeholder="Use the mic on your keyboard."></textarea>
+  <div id="tag-chips"></div>
+  <button id="save-entry" class="primary">Save</button>
+  <div id="entry-list"></div>
+  <button data-goto="home">Back</button>
+</section>
+
+<section id="testimony" class="screen" hidden>
+  <h2>Testimonies</h2>
+  <p class="verse">"They overcame him by the blood of the Lamb,<br>and by the word of their testimony."<br><span>Revelation 12:11</span></p>
+  <div id="testimony-list"></div>
+  <button data-goto="home">Back</button>
+</section>
+
+<section id="study" class="screen" hidden>
+  <h2>Study</h2>
+  <input id="study-ref" placeholder="john 3" autocapitalize="none">
+  <button id="study-go">Go</button>
+  <div id="study-cols"></div>
+  <a id="amp-link" target="_blank" rel="noopener">Read in AMP</a>
+  <div id="strongs-panel" hidden></div>
+  <button data-goto="home">Back</button>
+</section>
+
+<section id="settings" class="screen" hidden>
+  <h2>Settings</h2>
+  <label>Daily reminder <input type="time" id="reminder-time" value="05:30"></label>
+  <button id="make-ics">Add to Calendar</button>
+  <button id="export">Export everything</button>
+  <button data-goto="home">Back</button>
+</section>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
