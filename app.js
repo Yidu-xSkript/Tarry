@@ -223,7 +223,7 @@ $('#make-ics').addEventListener('click', () => {
 
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 
-import { parseRef, refToPath, bibleGatewayUrl, plainVerse } from './lib.js';
+import { parseRef, refToPath, bibleGatewayUrl, plainVerse, BOOKS, bookName } from './lib.js';
 
 const bookCache = new Map();
 
@@ -263,13 +263,68 @@ function renderColumn(version, chapter, ref) {
   return col;
 }
 
+// --- the picker: book, chapter, verse. Native <select>, so iOS gives its own
+// wheel and there is no dropdown widget to build or maintain.
+
+function fillSelect(sel, values, labelFor = v => v) {
+  sel.innerHTML = '';
+  for (const v of values) {
+    const o = document.createElement('option');
+    o.value = v;
+    o.textContent = labelFor(v);
+    sel.append(o);
+  }
+}
+
+function currentRef() {
+  return {
+    book: $('#sel-book').value,
+    chapter: $('#sel-chapter').value,
+    verse: $('#sel-verse').value || null,
+  };
+}
+
+async function fillChapters(keepChapter) {
+  const book = await loadBook('kjv', { book: $('#sel-book').value });
+  const chapters = Object.keys(book).sort((a, b) => a - b);
+  fillSelect($('#sel-chapter'), chapters, n => `Chapter ${n}`);
+  if (keepChapter && chapters.includes(keepChapter)) $('#sel-chapter').value = keepChapter;
+  return book;
+}
+
+async function fillVerses(keepVerse) {
+  const book = await loadBook('kjv', { book: $('#sel-book').value });
+  const verses = Object.keys(book[$('#sel-chapter').value] ?? {}).sort((a, b) => a - b);
+  fillSelect($('#sel-verse'), ['', ...verses], v => (v ? `Verse ${v}` : 'Whole chapter'));
+  if (keepVerse && verses.includes(keepVerse)) $('#sel-verse').value = keepVerse;
+}
+
+// Used by the cross-reference buttons: jump the picker somewhere and render it.
+async function goTo(book, chapter, verse) {
+  $('#sel-book').value = book;
+  await fillChapters(chapter);
+  await fillVerses(verse);
+  await openStudy();
+}
+
+fillSelect($('#sel-book'), BOOKS.map(b => b.key), bookName);
+$('#sel-book').value = 'john';
+
+$('#sel-book').addEventListener('change', async () => {
+  await fillChapters(); await fillVerses(); openStudy();
+});
+$('#sel-chapter').addEventListener('change', async () => {
+  await fillVerses(); openStudy();
+});
+$('#sel-verse').addEventListener('change', openStudy);
+
 async function openStudy() {
-  const ref = parseRef($('#study-ref').value);
+  const ref = currentRef();
   const cols = $('#study-cols');
   cols.innerHTML = '';
-  if (!ref) { cols.textContent = 'Try "john 3" or "1 John 4:9".'; return; }
 
-  $('#amp-link').href = bibleGatewayUrl(ref);
+  // Bible Gateway wants a human reference, not our filename key.
+  $('#amp-link').href = bibleGatewayUrl({ ...ref, book: bookName(ref.book) });
 
   for (const version of ['kjv', 'bsb']) {
     try {
@@ -288,8 +343,13 @@ async function openStudy() {
   await renderXrefs(ref);
 }
 
-$('#study-go').addEventListener('click', openStudy);
-$('#study-ref').addEventListener('keydown', e => { if (e.key === 'Enter') openStudy(); });
+// First time Study is opened, land somewhere rather than on a blank screen.
+document.querySelector('[data-goto="study"]').addEventListener('click', async () => {
+  if ($('#sel-chapter').options.length) return;
+  await fillChapters('3');
+  await fillVerses('16');
+  openStudy();
+});
 
 let xrefs = null;
 async function loadXrefs() {
@@ -323,8 +383,9 @@ async function renderXrefs(ref) {
   box.innerHTML = '<h3>CROSS REFERENCES</h3>';
   list.forEach(target => {
     const b = document.createElement('button');
-    b.textContent = target.replace(/\./g, ' ');
-    b.addEventListener('click', () => { $('#study-ref').value = target; openStudy(); });
+    const [tb, tc, tv] = target.split('.');
+    b.textContent = `${bookName(tb)} ${tc}:${tv}`;
+    b.addEventListener('click', () => goTo(tb, tc, tv));
     box.append(b);
   });
   $('#study-cols').append(box);

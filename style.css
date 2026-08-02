@@ -38,6 +38,8 @@ body.dark .screen > *:not(.release) { opacity:.12; transition:opacity 3s; }
 .entry .answer { margin-top:12px; padding-left:14px; border-left:2px solid var(--accent); }
 .chip { border-radius:20px; padding:8px 16px; font-size:15px; margin:0 6px 6px 0; }
 .chip.on { border-color:var(--accent); color:var(--accent); }
+#picker { display:grid; grid-template-columns:2fr 1fr 1fr; gap:8px; }
+#picker select { -webkit-appearance:none; appearance:none; text-align:center; }
 #study-cols { display:grid; grid-template-columns:1fr 1fr; gap:20px; font-size:17px; }
 #study-cols h3 { font-size:13px; letter-spacing:.14em; color:var(--dim); font-weight:400; }
 .tok { cursor:pointer; }

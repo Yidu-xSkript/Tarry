@@ -123,3 +123,26 @@ test('plainVerse joins tokens into text with no Strong\'s markup', () => {
 test('plainVerse returns null for a missing verse rather than throwing', () => {
   assert.equal(plainVerse({}, '1'), null);
 });
+
+import { BOOKS, bookName } from '../lib.js';
+import { readdirSync } from 'node:fs';
+
+test('the canon runs Genesis to Revelation, 66 books', () => {
+  assert.equal(BOOKS.length, 66);
+  assert.equal(BOOKS[0].key, 'genesis');
+  assert.equal(BOOKS.at(-1).key, 'revelation');
+  assert.equal(BOOKS[39].key, 'matthew', 'the New Testament starts at index 39');
+});
+
+test('every book key has a data file, and every data file has a book key', () => {
+  const onDisk = new Set(readdirSync('data/kjv').map(f => f.replace('.json', '')));
+  const inCanon = new Set(BOOKS.map(b => b.key));
+  assert.deepEqual([...inCanon].filter(k => !onDisk.has(k)), [], 'canon entries with no data file');
+  assert.deepEqual([...onDisk].filter(k => !inCanon.has(k)), [], 'data files missing from the canon');
+});
+
+test('bookName gives the human name and falls back to the key', () => {
+  assert.equal(bookName('1john'), '1 John');
+  assert.equal(bookName('psalm'), 'Psalms');
+  assert.equal(bookName('narnia'), 'narnia');
+});

@@ -50,8 +50,11 @@
 
 <section id="study" class="screen" hidden>
   <h2>Study</h2>
-  <input id="study-ref" placeholder="john 3" autocapitalize="none">
-  <button id="study-go">Go</button>
+  <div id="picker">
+    <select id="sel-book" aria-label="Book"></select>
+    <select id="sel-chapter" aria-label="Chapter"></select>
+    <select id="sel-verse" aria-label="Verse"></select>
+  </div>
   <div id="study-cols"></div>
   <a id="amp-link" target="_blank" rel="noopener">Read in AMP</a>
   <div id="strongs-panel" hidden></div>
