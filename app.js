@@ -287,7 +287,9 @@ function currentRef() {
 async function fillChapters(keepChapter) {
   const book = await loadBook('kjv', { book: $('#sel-book').value });
   const chapters = Object.keys(book).sort((a, b) => a - b);
-  fillSelect($('#sel-chapter'), chapters, n => `Chapter ${n}`);
+  // Short labels: "Chapter 12" clips to nothing in a third of a phone screen.
+  // The full reference is spelled out under the picker anyway.
+  fillSelect($('#sel-chapter'), chapters, n => `Ch ${n}`);
   if (keepChapter && chapters.includes(keepChapter)) $('#sel-chapter').value = keepChapter;
   return book;
 }
@@ -295,7 +297,7 @@ async function fillChapters(keepChapter) {
 async function fillVerses(keepVerse) {
   const book = await loadBook('kjv', { book: $('#sel-book').value });
   const verses = Object.keys(book[$('#sel-chapter').value] ?? {}).sort((a, b) => a - b);
-  fillSelect($('#sel-verse'), ['', ...verses], v => (v ? `Verse ${v}` : 'Whole chapter'));
+  fillSelect($('#sel-verse'), ['', ...verses], v => (v ? `v ${v}` : 'All'));
   if (keepVerse && verses.includes(keepVerse)) $('#sel-verse').value = keepVerse;
 }
 
