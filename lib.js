@@ -26,3 +26,17 @@ export const MOVEMENTS = [
     body: '"They that wait upon the LORD shall renew their strength."\n— Isaiah 40:31',
     floor: null },
 ];
+
+export function movementById(id) {
+  const m = MOVEMENTS.find(m => m.id === id);
+  if (!m) throw new Error(`no movement: ${id}`);
+  return m;
+}
+
+// The inverted timer. Nothing counts down; the way out is withheld until the
+// floor is stood on. `floor: null` means there is no way out at all.
+export function releaseState(movement, elapsedMs) {
+  if (movement.floor === null) return { released: false, label: null };
+  if (elapsedMs < movement.floor * 1000) return { released: false, label: null };
+  return { released: true, label: movement.release ?? 'continue' };
+}
