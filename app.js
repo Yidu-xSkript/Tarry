@@ -5,7 +5,10 @@ import { MOVEMENTS, releaseState, TAGS, addEntry, answerEntry,
 // walked in a minute. The Wait still never releases — that is not a floor.
 // Ship-safe: without the query param the real floors are untouched.
 const fast = Number(new URLSearchParams(location.search).get('fast'));
-if (fast > 0) MOVEMENTS.forEach(m => { if (m.floor !== null) m.floor = fast; });
+if (fast > 0) {
+  MOVEMENTS.forEach(m => { if (m.floor !== null) m.floor = fast; });
+  document.body.classList.add('fast');   // shorten the fade too, or testing crawls
+}
 
 const $ = sel => document.querySelector(sel);
 const screens = [...document.querySelectorAll('.screen')];
