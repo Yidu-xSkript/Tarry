@@ -98,3 +98,28 @@ export function icsFor(hhmm, startYYYYMMDD, { uid = 'tarry-daily@local', title =
     'END:VCALENDAR',
   ].join('\r\n');
 }
+
+// ponytail: a regex, not a full reference parser. It handles "John 3:16",
+// "1 John 4:9", and "psalm.63.1", which is every form this app produces.
+// Upgrade path: a book-name alias table if abbreviations are ever wanted.
+export function parseRef(input) {
+  const m = String(input).trim().toLowerCase()
+    .match(/^([1-3]?\s*[a-z]+(?:\s+of\s+[a-z]+)?)[\s.]+(\d+)(?:[:.](\d+))?$/);
+  if (!m) return null;
+  return { book: m[1].replace(/\s+/g, ''), chapter: m[2], verse: m[3] ?? null };
+}
+
+export function refToPath(version, ref) {
+  return `data/${version}/${ref.book}.json`;
+}
+
+export function bibleGatewayUrl(ref) {
+  const passage = `${ref.book} ${ref.chapter}${ref.verse ? `:${ref.verse}` : ''}`;
+  return `https://www.biblegateway.com/passage/?search=${encodeURIComponent(passage)}&version=AMP`;
+}
+
+export function plainVerse(chapter, verse) {
+  const tokens = chapter?.[verse];
+  if (!tokens) return null;
+  return tokens.map(t => t.t).join(' ').replace(/\s+([,;.!?])/g, '$1');
+}

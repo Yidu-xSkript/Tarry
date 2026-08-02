@@ -89,3 +89,37 @@ test('single-digit hours are zero-padded', () => {
 test('lines are CRLF terminated as the iCalendar spec requires', () => {
   assert.ok(icsFor('05:30', '20260803').includes('\r\n'));
 });
+
+import { parseRef, refToPath, bibleGatewayUrl, plainVerse } from '../lib.js';
+
+test('parseRef reads book, chapter, and optional verse', () => {
+  assert.deepEqual(parseRef('john 3'), { book: 'john', chapter: '3', verse: null });
+  assert.deepEqual(parseRef('John 3:16'), { book: 'john', chapter: '3', verse: '16' });
+  assert.deepEqual(parseRef('1 John 4:9'), { book: '1john', chapter: '4', verse: '9' });
+  assert.deepEqual(parseRef('psalm.63.1'), { book: 'psalm', chapter: '63', verse: '1' });
+});
+
+test('parseRef rejects nonsense rather than guessing', () => {
+  assert.equal(parseRef(''), null);
+  assert.equal(parseRef('john'), null);
+});
+
+test('refToPath points at the per-book data file', () => {
+  assert.equal(refToPath('bsb', parseRef('1 John 4:9')), 'data/bsb/1john.json');
+});
+
+test('the AMP link targets Bible Gateway at that passage', () => {
+  const url = bibleGatewayUrl(parseRef('John 3:16'));
+  assert.match(url, /biblegateway\.com/);
+  assert.match(url, /version=AMP/);
+  assert.match(url, /John(\+|%20)3/i);
+});
+
+test('plainVerse joins tokens into text with no Strong\'s markup', () => {
+  const chapter = { '1': [{ t: 'O', s: null }, { t: 'God', s: 'H430' }] };
+  assert.equal(plainVerse(chapter, '1'), 'O God');
+});
+
+test('plainVerse returns null for a missing verse rather than throwing', () => {
+  assert.equal(plainVerse({}, '1'), null);
+});
