@@ -131,6 +131,40 @@ export function bookName(key) {
   return BOOKS.find(b => b.key === key)?.name ?? key;
 }
 
+// `index` is data/index.json: { bookKey: [versesInCh1, versesInCh2, ...] }.
+// Moving a chapter runs off the end of a book into the next one, or off the
+// front into the previous one. Returns null at Genesis 1 and Revelation 22.
+function stepChapter(bookKey, chapter, delta, index) {
+  const next = chapter + delta;
+  if (next >= 1 && next <= index[bookKey].length) {
+    return { book: bookKey, chapter: String(next), verse: null };
+  }
+  const bi = BOOKS.findIndex(b => b.key === bookKey) + delta;
+  if (bi < 0 || bi >= BOOKS.length) return null;   // the ends of the canon
+  const key = BOOKS[bi].key;
+  return { book: key, chapter: String(delta > 0 ? 1 : index[key].length), verse: null };
+}
+
+// One step forward or back. On a verse, that is the next verse — rolling into
+// the next chapter (and the next book) when you run off the end. On a whole
+// chapter, it is the next chapter. Null means there is nowhere further to go.
+export function step(ref, delta, index) {
+  if (!index[ref.book]) return null;
+  const chapter = Number(ref.chapter);
+
+  if (ref.verse === null) return stepChapter(ref.book, chapter, delta, index);
+
+  const verse = Number(ref.verse) + delta;
+  if (verse >= 1 && verse <= index[ref.book][chapter - 1]) {
+    return { book: ref.book, chapter: String(chapter), verse: String(verse) };
+  }
+
+  const landed = stepChapter(ref.book, chapter, delta, index);
+  if (!landed) return null;
+  const versesThere = index[landed.book][Number(landed.chapter) - 1];
+  return { ...landed, verse: String(delta > 0 ? 1 : versesThere) };
+}
+
 // ponytail: a regex, not a full reference parser. It handles "John 3:16",
 // "1 John 4:9", and "psalm.63.1", which is every form this app produces.
 // Upgrade path: a book-name alias table if abbreviations are ever wanted.

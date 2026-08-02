@@ -1,4 +1,4 @@
-const CACHE = 'tarry-v9';
+const CACHE = 'tarry-v10';
 // ponytail: precache the shell, the two small lookup files, and psalm — the only
 // book a prayer session itself opens. The other 130 book files are ~34 MB raw and
 // are cached individually on first visit by the fetch handler below, so install
@@ -6,7 +6,7 @@ const CACHE = 'tarry-v9';
 // if a cold study lookup on a plane ever actually bites.
 const SHELL = ['.', 'index.html', 'style.css', 'app.js', 'lib.js',
   'manifest.webmanifest', 'icon-512.png',
-  'data/VERSIONS.json', 'data/strongs.json', 'data/xrefs.json',
+  'data/VERSIONS.json', 'data/index.json', 'data/strongs.json', 'data/xrefs.json',
   'data/bsb/psalm.json', 'data/kjv/psalm.json'];
 
 self.addEventListener('install', e => {

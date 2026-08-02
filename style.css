@@ -40,10 +40,14 @@ body.dark .screen > *:not(.release) { opacity:.12; transition:opacity 3s; }
 .chip.on { border-color:var(--accent); color:var(--accent); }
 #picker { display:grid; grid-template-columns:minmax(0,1.7fr) minmax(0,1fr) minmax(0,1fr); gap:8px; }
 /* Keep the native chevron — it is the only affordance saying "this is a menu". */
+/* Right padding reserves room for the native chevron, which otherwise sits on
+   top of the selected value and hides the number. */
 #picker select { width:100%; min-width:0; background:#141416; color:var(--fg);
-  border:1px solid #2a2a2e; border-radius:2px; padding:12px 4px; font-size:17px; }
+  border:1px solid #2a2a2e; border-radius:2px; padding:12px 22px 12px 8px; font-size:17px; }
 #picker option { background:#141416; color:var(--fg); }
 #study-where { color:var(--accent); letter-spacing:.06em; margin:0; }
+#steps { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+#steps button:disabled { opacity:.3; }
 #study-cols { display:grid; grid-template-columns:1fr 1fr; gap:20px; font-size:17px; }
 #study-cols h3 { font-size:13px; letter-spacing:.14em; color:var(--dim); font-weight:400; }
 /* Cross references run under both columns, not squeezed into one grid cell. */

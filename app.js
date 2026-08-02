@@ -223,7 +223,7 @@ $('#make-ics').addEventListener('click', () => {
 
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 
-import { parseRef, refToPath, bibleGatewayUrl, plainVerse, BOOKS, bookName } from './lib.js';
+import { parseRef, refToPath, bibleGatewayUrl, plainVerse, BOOKS, bookName, step } from './lib.js';
 
 const bookCache = new Map();
 
@@ -284,19 +284,28 @@ function currentRef() {
   };
 }
 
+// data/index.json is 4 KB of verse counts. Filling the menus from it means
+// picking a book no longer downloads 440 KB of text just to count chapters.
+let INDEX = null;
+async function loadIndex() {
+  if (!INDEX) INDEX = await (await fetch('data/index.json')).json();
+  return INDEX;
+}
+
+const countUp = n => Array.from({ length: n }, (_, i) => String(i + 1));
+
 async function fillChapters(keepChapter) {
-  const book = await loadBook('kjv', { book: $('#sel-book').value });
-  const chapters = Object.keys(book).sort((a, b) => a - b);
+  const idx = await loadIndex();
+  const chapters = countUp(idx[$('#sel-book').value].length);
   // Short labels: "Chapter 12" clips to nothing in a third of a phone screen.
   // The full reference is spelled out under the picker anyway.
   fillSelect($('#sel-chapter'), chapters, n => `Ch ${n}`);
   if (keepChapter && chapters.includes(keepChapter)) $('#sel-chapter').value = keepChapter;
-  return book;
 }
 
 async function fillVerses(keepVerse) {
-  const book = await loadBook('kjv', { book: $('#sel-book').value });
-  const verses = Object.keys(book[$('#sel-chapter').value] ?? {}).sort((a, b) => a - b);
+  const idx = await loadIndex();
+  const verses = countUp(idx[$('#sel-book').value][Number($('#sel-chapter').value) - 1] ?? 0);
   fillSelect($('#sel-verse'), ['', ...verses], v => (v ? `v ${v}` : 'All'));
   if (keepVerse && verses.includes(keepVerse)) $('#sel-verse').value = keepVerse;
 }
@@ -331,6 +340,24 @@ $('#sel-chapter').addEventListener('change', guarded(async () => {
 }));
 $('#sel-verse').addEventListener('change', guarded(openStudy));
 
+// Prev/Next. On a verse it walks verses; on a whole chapter it walks chapters.
+// Either way it rolls over the end of a chapter and over the seam between books.
+async function move(delta) {
+  const to = step(currentRef(), delta, await loadIndex());
+  if (!to) return;                       // the ends of the canon
+  await goTo(to.book, to.chapter, to.verse);
+}
+
+$('#prev').addEventListener('click', guarded(() => move(-1)));
+$('#next').addEventListener('click', guarded(() => move(1)));
+
+async function updateSteps() {
+  const idx = await loadIndex();
+  const ref = currentRef();
+  $('#prev').disabled = !step(ref, -1, idx);
+  $('#next').disabled = !step(ref, 1, idx);
+}
+
 async function openStudy() {
   const ref = currentRef();
   const cols = $('#study-cols');
@@ -358,6 +385,7 @@ async function openStudy() {
   }
 
   await renderXrefs(ref);
+  await updateSteps();
 }
 
 // Opening Study fills the chapter and verse menus. Selecting a book that is

@@ -146,3 +146,57 @@ test('bookName gives the human name and falls back to the key', () => {
   assert.equal(bookName('psalm'), 'Psalms');
   assert.equal(bookName('narnia'), 'narnia');
 });
+
+import { step } from '../lib.js';
+import { readFileSync } from 'node:fs';
+
+const INDEX = JSON.parse(readFileSync('data/index.json', 'utf8'));
+const at = (book, chapter, verse = null) => ({ book, chapter, verse });
+
+test('the index agrees with the text: 1189 chapters, 31102 verses', () => {
+  assert.equal(Object.values(INDEX).reduce((a, c) => a + c.length, 0), 1189);
+  assert.equal(Object.values(INDEX).flat().reduce((a, c) => a + c, 0), 31102);
+});
+
+test('stepping a verse moves within the chapter', () => {
+  assert.deepEqual(step(at('john', '3', '16'), 1, INDEX), at('john', '3', '17'));
+  assert.deepEqual(step(at('john', '3', '16'), -1, INDEX), at('john', '3', '15'));
+});
+
+test('the last verse of a chapter steps into the next chapter, verse 1', () => {
+  assert.deepEqual(step(at('john', '3', '36'), 1, INDEX), at('john', '4', '1'));
+});
+
+test('the first verse of a chapter steps back to the last verse of the previous one', () => {
+  assert.deepEqual(step(at('john', '4', '1'), -1, INDEX), at('john', '3', '36'));
+});
+
+test('stepping crosses the seam between books', () => {
+  // Malachi 4:6 is the last verse of the Old Testament.
+  assert.deepEqual(step(at('malachi', '4', '6'), 1, INDEX), at('matthew', '1', '1'));
+  assert.deepEqual(step(at('matthew', '1', '1'), -1, INDEX), at('malachi', '4', '6'));
+});
+
+test('there is nowhere before Genesis 1:1 or after Revelation 22:21', () => {
+  assert.equal(step(at('genesis', '1', '1'), -1, INDEX), null);
+  assert.equal(step(at('revelation', '22', '21'), 1, INDEX), null);
+});
+
+test('on a whole chapter, stepping moves a chapter, not a verse', () => {
+  assert.deepEqual(step(at('john', '3'), 1, INDEX), at('john', '4'));
+  assert.deepEqual(step(at('john', '1'), -1, INDEX), at('luke', '24'));
+  assert.deepEqual(step(at('revelation', '22'), 1, INDEX), null);
+});
+
+test('every verse in the canon steps forward exactly 31101 times and then stops', () => {
+  let ref = at('genesis', '1', '1');
+  let n = 0;
+  while (true) {
+    const next = step(ref, 1, INDEX);
+    if (!next) break;
+    ref = next;
+    if (++n > 32000) break;   // guard against a cycle
+  }
+  assert.deepEqual(ref, at('revelation', '22', '21'));
+  assert.equal(n, 31101);
+});

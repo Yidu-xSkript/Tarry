@@ -23,6 +23,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import zlib from 'node:zlib';
+import { BOOKS } from '../lib.js';
 
 const srcDir = process.argv[2];
 if (!srcDir) {
@@ -369,6 +370,22 @@ console.log('\n[4/4] Cross-references...');
 const xrefsSrc = findXrefsSource(srcDir);
 const xrefs = parseXrefs(xrefsSrc);
 fs.writeFileSync(path.join(dataDir, 'xrefs.json'), JSON.stringify(xrefs));
+
+// A 4 KB map of { bookKey: [versesInCh1, versesInCh2, ...] }. It drives the
+// chapter/verse pickers and the prev/next stepping, so neither has to download
+// 440 KB of text just to count things.
+console.log('\n[5/5] Chapter and verse index...');
+const index = {};
+for (const { key } of BOOKS) {
+  const book = JSON.parse(fs.readFileSync(path.join(dataDir, 'kjv', `${key}.json`), 'utf8'));
+  index[key] = Object.keys(book)
+    .sort((a, b) => a - b)
+    .map(c => Object.keys(book[c]).length);
+}
+fs.writeFileSync(path.join(dataDir, 'index.json'), JSON.stringify(index));
+const chapterTotal = Object.values(index).reduce((a, c) => a + c.length, 0);
+const verseTotal = Object.values(index).flat().reduce((a, c) => a + c, 0);
+console.log(`  ${Object.keys(index).length} books, ${chapterTotal} chapters, ${verseTotal} verses`);
 
 console.log('\nBook key comparison (KJV vs BSB):');
 const kjvSet = new Set(kjvFiles);
