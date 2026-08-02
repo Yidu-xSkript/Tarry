@@ -1,0 +1,36 @@
+{
+  "kjv": {
+    "name": "King James Version",
+    "edition": "1769 Oxford (Blayney) edition, per the CrossWire Bible Society KJV OSIS module v3.1 (2023-07-19)",
+    "license": "Base text: public domain in the United States; perpetual Crown copyright in the United Kingdom (rights held by the Crown, printing administered under Letters Patent by Cambridge University Press, Oxford University Press, and Collins; not recognized under the Berne Convention, hence public domain outside the UK). Strong's tagging/OSIS markup: \"CrossWire Bible Society hereby grants a general public license to use this text for any purpose\" (DistributionLicense: GPL).",
+    "strongsSource": "OT Strong's numbers from The Bible Foundation; NT Strong's tagging from the KJV2003 Project at CrossWire (Dr. Maurice A. Robinson).",
+    "source": "https://gitlab.com/crosswire-bible-society/kjv (kjv.osis.xml)",
+    "verifiedDate": "2026-08-02"
+  },
+  "bsb": {
+    "name": "Berean Standard Bible",
+    "edition": "Berean Standard Bible, public-domain dedication dated 2023-04-30 (Berean Bible Translation Committee)",
+    "license": "Public domain. \"The Berean Bible and Majority Bible texts are officially dedicated to the public domain as of April 30, 2023. All uses are freely permitted.\" Attribution appreciated but not required.",
+    "attribution": "The Holy Bible, Berean Standard Bible, BSB is produced in cooperation with Bible Hub, Discovery Bible, unfoldingWord, Bible Aquifer, OpenBible.com, and the Berean Bible Translation Committee. This text of God's Word has been dedicated to the public domain.",
+    "source": "https://bereanbible.com/bsb.txt (plain text), https://bereanbible.com/bsb_tables.tsv (Strong's-tagged word alignment)",
+    "termsUrl": "https://berean.bible/terms.htm",
+    "verifiedDate": "2026-08-02"
+  },
+  "strongs": {
+    "name": "Strong's Hebrew and Greek Dictionaries",
+    "edition": "Open Scriptures JSON encoding, derived from James Strong's dictionaries (1890/1894)",
+    "license": "CC BY-SA for this JSON dataset (per header comment in the source files; the repository has no formal LICENSE file). Underlying 1890s dictionary text is public domain (James Strong, d. 1894).",
+    "attribution": "Open Scriptures (openscriptures/strongs), derived from James Strong's Strong's Exhaustive Concordance dictionaries.",
+    "source": "https://github.com/openscriptures/strongs (hebrew/strongs-hebrew-dictionary.js, greek/strongs-greek-dictionary.js)",
+    "verifiedDate": "2026-08-02"
+  },
+  "xrefs": {
+    "name": "OpenBible.info Cross References",
+    "edition": "cross-references.zip, fetched 2026-08-02",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Cross-reference data: openbible.info, CC BY 4.0, drawing primarily from the Treasury of Scripture Knowledge.",
+    "source": "https://www.openbible.info/labs/cross-references/ (https://a.openbible.info/data/cross-references.zip)",
+    "verifiedDate": "2026-08-02"
+  }
+}
