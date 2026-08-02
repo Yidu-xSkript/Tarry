@@ -195,3 +195,110 @@ $('#make-ics').addEventListener('click', () => {
 });
 
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+
+import { parseRef, refToPath, bibleGatewayUrl } from './lib.js';
+
+const bookCache = new Map();
+
+async function loadBook(version, ref) {
+  const path = refToPath(version, ref);
+  if (!bookCache.has(path)) {
+    const res = await fetch(path);
+    if (!res.ok) throw new Error(`no such book: ${ref.book}`);
+    bookCache.set(path, await res.json());
+  }
+  return bookCache.get(path);
+}
+
+let strongs = null;
+async function loadStrongs() {
+  if (!strongs) strongs = await (await fetch('data/strongs.json')).json();
+  return strongs;
+}
+
+function renderColumn(version, chapter, ref) {
+  const col = document.createElement('div');
+  col.innerHTML = `<h3>${version.toUpperCase()}</h3>`;
+  const verses = ref.verse ? { [ref.verse]: chapter[ref.verse] } : chapter;
+  for (const [n, tokens] of Object.entries(verses)) {
+    if (!tokens) continue;
+    const p = document.createElement('p');
+    p.innerHTML = `<span class="when">${n}</span> `;
+    tokens.forEach(tok => {
+      const s = document.createElement('span');
+      s.className = 'tok';
+      s.textContent = tok.t + ' ';
+      if (tok.s) { s.dataset.s = tok.s; }
+      p.append(s);
+    });
+    col.append(p);
+  }
+  return col;
+}
+
+async function openStudy() {
+  const ref = parseRef($('#study-ref').value);
+  const cols = $('#study-cols');
+  cols.innerHTML = '';
+  if (!ref) { cols.textContent = 'Try "john 3" or "1 John 4:9".'; return; }
+
+  $('#amp-link').href = bibleGatewayUrl(ref);
+
+  for (const version of ['kjv', 'bsb']) {
+    try {
+      const book = await loadBook(version, ref);
+      const chapter = book[ref.chapter];
+      if (!chapter) throw new Error('no such chapter');
+      cols.append(renderColumn(version, chapter, ref));
+    } catch (err) {
+      const col = document.createElement('div');
+      col.innerHTML = `<h3>${version.toUpperCase()}</h3>`;
+      col.append(Object.assign(document.createElement('p'), { textContent: err.message }));
+      cols.append(col);
+    }
+  }
+
+  await renderXrefs(ref);
+}
+
+$('#study-go').addEventListener('click', openStudy);
+$('#study-ref').addEventListener('keydown', e => { if (e.key === 'Enter') openStudy(); });
+
+let xrefs = null;
+async function loadXrefs() {
+  if (!xrefs) xrefs = await (await fetch('data/xrefs.json')).json();
+  return xrefs;
+}
+
+$('#study-cols').addEventListener('click', async e => {
+  const code = e.target.dataset?.s;
+  if (!code) return;
+  const dict = await loadStrongs();
+  const entry = dict[code];
+  const panel = $('#strongs-panel');
+  panel.hidden = false;
+  panel.innerHTML = entry
+    ? `<div class="when">${code}</div>
+       <p><strong>${entry.lemma}</strong> · ${entry.translit}</p>
+       <p>${entry.def}</p>
+       <button id="close-strongs">Close</button>`
+    : `<div class="when">${code}</div><p>Not in the dictionary.</p>
+       <button id="close-strongs">Close</button>`;
+  $('#close-strongs').addEventListener('click', () => { panel.hidden = true; });
+});
+
+async function renderXrefs(ref) {
+  if (!ref.verse) return;
+  const map = await loadXrefs();
+  const list = map[`${ref.book}.${ref.chapter}.${ref.verse}`] ?? [];
+  if (!list.length) return;
+  const box = document.createElement('div');
+  box.innerHTML = '<h3>CROSS REFERENCES</h3>';
+  list.forEach(target => {
+    const b = document.createElement('button');
+    b.textContent = target.replace(/\./g, ' ');
+    b.addEventListener('click', () => { $('#study-ref').value = target; openStudy(); });
+    box.append(b);
+  });
+  $('#study-cols').append(box);
+}
