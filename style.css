@@ -13,7 +13,7 @@ h2 { font-size:30px; margin:0; letter-spacing:.04em; }
 .verse { color:var(--dim); text-align:center; font-size:17px; line-height:1.6; }
 .verse span { display:block; margin-top:8px; font-size:14px; letter-spacing:.1em; }
 p { white-space:pre-line; }
-button, input, textarea, a { font:inherit; color:var(--fg); }
+button, input, textarea, select, a { font:inherit; color:var(--fg); }
 button { background:none; border:1px solid var(--dim); border-radius:2px; padding:14px 20px; }
 button.primary { border-color:var(--accent); color:var(--accent); }
 nav { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; }
@@ -39,7 +39,10 @@ body.dark .screen > *:not(.release) { opacity:.12; transition:opacity 3s; }
 .chip { border-radius:20px; padding:8px 16px; font-size:15px; margin:0 6px 6px 0; }
 .chip.on { border-color:var(--accent); color:var(--accent); }
 #picker { display:grid; grid-template-columns:2fr 1fr 1fr; gap:8px; }
-#picker select { -webkit-appearance:none; appearance:none; text-align:center; }
+/* Keep the native chevron — it is the only affordance saying "this is a menu". */
+#picker select { width:100%; background:#141416; color:var(--fg);
+  border:1px solid #2a2a2e; border-radius:2px; padding:12px 8px; font-size:17px; }
+#picker option { background:#141416; color:var(--fg); }
 #study-cols { display:grid; grid-template-columns:1fr 1fr; gap:20px; font-size:17px; }
 #study-cols h3 { font-size:13px; letter-spacing:.14em; color:var(--dim); font-weight:400; }
 .tok { cursor:pointer; }
