@@ -45,6 +45,10 @@ body.dark .screen > *:not(.release) { opacity:.12; transition:opacity 3s; }
 #picker option { background:#141416; color:var(--fg); }
 #study-cols { display:grid; grid-template-columns:1fr 1fr; gap:20px; font-size:17px; }
 #study-cols h3 { font-size:13px; letter-spacing:.14em; color:var(--dim); font-weight:400; }
+/* Cross references run under both columns, not squeezed into one grid cell. */
+#study-cols .xrefs { grid-column:1 / -1; display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+#study-cols .xrefs h3 { width:100%; margin:0; }
+#study-cols .xrefs button { padding:8px 14px; font-size:15px; }
 .tok { cursor:pointer; }
 .tok[data-s] { border-bottom:1px dotted #3a3a3e; }
 #strongs-panel { position:fixed; inset:auto 0 0 0; background:#141416;

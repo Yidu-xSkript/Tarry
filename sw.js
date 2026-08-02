@@ -1,4 +1,4 @@
-const CACHE = 'tarry-v6';
+const CACHE = 'tarry-v7';
 // ponytail: precache the shell, the two small lookup files, and psalm — the only
 // book a prayer session itself opens. The other 130 book files are ~34 MB raw and
 // are cached individually on first visit by the fetch handler below, so install

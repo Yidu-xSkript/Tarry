@@ -384,13 +384,28 @@ $('#study-cols').addEventListener('click', async e => {
   $('#close-strongs').addEventListener('click', () => { panel.hidden = true; });
 });
 
+function say(box, text) {
+  box.append(Object.assign(document.createElement('p'), { textContent: text }));
+}
+
 async function renderXrefs(ref) {
-  if (!ref.verse) return;
+  // Always render the heading. Vanishing silently reads as "broken", and about
+  // 1,700 of the 31,102 verses genuinely have no cross references.
+  const box = document.createElement('div');
+  box.className = 'xrefs';
+  box.innerHTML = '<h3>CROSS REFERENCES</h3>';
+  $('#study-cols').append(box);
+
+  if (!ref.verse) {
+    say(box, 'Pick a single verse to see where else Scripture speaks to it.');
+    return;
+  }
   const map = await loadXrefs();
   const list = map[`${ref.book}.${ref.chapter}.${ref.verse}`] ?? [];
-  if (!list.length) return;
-  const box = document.createElement('div');
-  box.innerHTML = '<h3>CROSS REFERENCES</h3>';
+  if (!list.length) {
+    say(box, 'No cross references for this verse.');
+    return;
+  }
   list.forEach(target => {
     const b = document.createElement('button');
     const [tb, tc, tv] = target.split('.');
@@ -398,5 +413,4 @@ async function renderXrefs(ref) {
     b.addEventListener('click', () => goTo(tb, tc, tv));
     box.append(b);
   });
-  $('#study-cols').append(box);
 }
