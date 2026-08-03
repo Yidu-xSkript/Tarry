@@ -2,9 +2,20 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { MOVEMENTS } from '../lib.js';
 
-test('the altar has eight movements ending in the wait', () => {
-  assert.equal(MOVEMENTS.length, 8);
+test('the altar has nine movements ending in the wait', () => {
+  assert.equal(MOVEMENTS.length, 9);
   assert.equal(MOVEMENTS.at(-1).id, 'wait');
+});
+
+test('adoration comes after the Word and before thanksgiving', () => {
+  assert.deepEqual(MOVEMENTS.slice(1, 4).map(m => m.id), ['word', 'behold', 'thanks']);
+});
+
+test('only the wait has no floor, and the floors total 28 minutes', () => {
+  const noFloor = MOVEMENTS.filter(m => m.floor === null).map(m => m.id);
+  assert.deepEqual(noFloor, ['wait']);
+  const total = MOVEMENTS.reduce((a, m) => a + (m.floor ?? 0), 0);
+  assert.equal(total, 28 * 60);
 });
 
 import { releaseState, movementById } from '../lib.js';

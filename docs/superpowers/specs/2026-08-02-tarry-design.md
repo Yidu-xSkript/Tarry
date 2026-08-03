@@ -30,6 +30,7 @@ Floors lengthen through the session, mirroring how prayer warms up.
 |---|----------|-----------|-------|
 | 1 | Be still | *"Be still, and know that I am God."* Ps 46:10 | 1 min |
 | 2 | The Word | One passage, plainly shown. Read it slow. Read it again. | 2 min |
+| — | **Behold the King** | *"Worthy is the Lamb that was slain."* Rev 5:12. Not what He has done — who He is. | 3 min |
 | 3 | Thanksgiving | *"Enter into his gates with thanksgiving."* Ps 100:4. Name things out loud. | 3 min |
 | 4 | Search me | *"Search me, O God, and know my heart."* Ps 139:23. Don't dig — let Him bring it up. | 3 min |
 | 5 | Confess & release | Name it plainly. Then forgive whoever is owed — *"when ye stand praying, forgive."* Mk 11:25 | 3 min |
@@ -37,7 +38,7 @@ Floors lengthen through the session, mirroring how prayer warms up.
 | 7 | Tongues / soaking | Pray in the Spirit. Screen goes dark. | 8 min |
 | 8 | **Wait** | *"They that wait upon the LORD shall renew their strength."* Isa 40:31 | **none** |
 
-Total floor before waiting: 25 minutes.
+Total floor before waiting: 28 minutes. Movements are renumbered by their order in the array; the table above lists them in order.
 
 ### Movement 5 — the release detail
 
