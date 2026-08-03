@@ -60,6 +60,18 @@ export function byTag(entries, tag) {
   return tag ? entries.filter(e => e.tag === tag) : entries;
 }
 
+// Restoring a backup must never destroy what is already here — someone
+// restoring an old file should not lose the prayers they wrote since. Merge by
+// id, and when the same entry exists twice, keep the one that has a testimony.
+export function mergeEntries(current, incoming) {
+  const byId = new Map(current.map(e => [e.id, e]));
+  for (const e of incoming) {
+    const have = byId.get(e.id);
+    if (!have || (!have.answer && e.answer)) byId.set(e.id, e);
+  }
+  return [...byId.values()].sort((a, b) => a.created.localeCompare(b.created));
+}
+
 export function toPlainText(entries) {
   return entries.map(e => {
     const head = `${e.created}${e.tag ? `  [${e.tag}]` : ''}\n${e.text}`;

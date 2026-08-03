@@ -25,6 +25,7 @@
 </section>
 
 <section id="session" class="screen" hidden>
+  <button id="leave">End for now</button>
   <h2 id="m-title"></h2>
   <p id="m-body"></p>
   <div id="m-passage"></div>
@@ -71,7 +72,11 @@
   <h2>Settings</h2>
   <label>Daily reminder <input type="time" id="reminder-time" value="05:30"></label>
   <button id="make-ics">Add to Calendar</button>
-  <button id="export">Export everything</button>
+  <button id="export">Export as text</button>
+  <button id="backup">Back up to a file</button>
+  <button id="restore-btn">Restore from a backup</button>
+  <input type="file" id="restore" accept=".json,application/json" hidden>
+  <p id="restore-note" class="verse" aria-live="polite">Your entries live only on this phone. Nothing is synced anywhere. Back up now and then — a browser clearing its storage would take your prayers with it.</p>
   <button data-goto="home">Back</button>
 </section>
 

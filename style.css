@@ -1,4 +1,6 @@
-:root { --bg:#0b0b0d; --fg:#e8e4dc; --dim:#6c6a66; --accent:#c9a227; }
+/* --dim was #6c6a66, which measures 3.64:1 on the background — under the 4.5:1
+   needed for body text. #8f8c86 is 5.87:1 and still reads as quiet. */
+:root { --bg:#0b0b0d; --fg:#e8e4dc; --dim:#8f8c86; --accent:#c9a227; }
 * { box-sizing: border-box; }
 body {
   margin:0; background:var(--bg); color:var(--fg);
@@ -30,8 +32,13 @@ textarea, input { width:100%; background:#141416; border:1px solid #2a2a2e; bord
 
 body.fast .release { transition-duration:.3s; }
 
-body.dark { background:#000; }
-body.dark .screen > *:not(.release) { opacity:.12; transition:opacity 3s; }
+/* Soaking. The darkness comes from the background going pure black and the
+   chrome receding — NOT from dimming the words. Text at 12% opacity measured
+   1.2:1, which is not atmosphere, it is unreadable. */
+body.dark { background:#000; transition:background 3s; }
+body.dark #m-title { opacity:.55; transition:opacity 3s; }   /* 30px heading, still AA-large */
+body.dark #m-body { color:var(--dim); transition:color 3s; }
+body.dark #leave { opacity:.25; }
 
 .entry { border-top:1px solid #222; padding:18px 0; }
 .entry .when { color:var(--dim); font-size:14px; letter-spacing:.06em; }
@@ -46,9 +53,16 @@ body.dark .screen > *:not(.release) { opacity:.12; transition:opacity 3s; }
   border:1px solid #2a2a2e; border-radius:2px; padding:12px 22px 12px 8px; font-size:17px; }
 #picker option { background:#141416; color:var(--fg); }
 #study-where { color:var(--accent); letter-spacing:.06em; margin:0; }
+/* A way to stop, never a way to skip ahead. Quiet, out of the way, always there. */
+#leave { position:fixed; top:calc(env(safe-area-inset-top) + 10px); right:20px;
+  border:none; background:none; color:var(--dim); font-size:15px; padding:8px; }
+
 #steps { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
 #steps button:disabled { opacity:.3; }
-#study-cols { display:grid; grid-template-columns:1fr 1fr; gap:20px; font-size:17px; }
+/* Mobile first: two columns of Scripture on a 390px screen is ~180px each,
+   which is unreadable. Stack them; go side by side only when there is room. */
+#study-cols { display:grid; grid-template-columns:1fr; gap:20px; font-size:17px; }
+@media (min-width: 700px) { #study-cols { grid-template-columns:1fr 1fr; } }
 #study-cols h3 { font-size:13px; letter-spacing:.14em; color:var(--dim); font-weight:400; }
 /* Cross references run under both columns, not squeezed into one grid cell. */
 #study-cols .xrefs { grid-column:1 / -1; display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
@@ -59,4 +73,9 @@ body.dark .screen > *:not(.release) { opacity:.12; transition:opacity 3s; }
 #strongs-panel { position:fixed; inset:auto 0 0 0; background:#141416;
   border-top:1px solid #2a2a2e; padding:20px 24px 40px; }
 
-@media (prefers-reduced-motion: reduce) { .release { transition-duration:.01ms; } }
+/* Keyboard users must be able to see where they are. */
+:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .release, body.dark, body.dark #m-title, body.dark #m-body { transition-duration:.01ms; }
+}

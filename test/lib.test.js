@@ -71,6 +71,26 @@ test('export includes the burden, its testimony, and both dates', () => {
   assert.match(out, /He came home\./);
 });
 
+import { mergeEntries } from '../lib.js';
+
+test('restoring a backup never deletes what is already here', () => {
+  const now = addEntry(seed(), { id: 'new', created: '2026-07-01', text: 'written since the backup' });
+  const old = seed();
+  const merged = mergeEntries(now, old);
+  assert.deepEqual(merged.map(e => e.id).sort(), ['a', 'new']);
+});
+
+test('restoring the same entry twice does not duplicate it', () => {
+  assert.equal(mergeEntries(seed(), seed()).length, 1);
+});
+
+test('when an entry exists twice, the answered one wins', () => {
+  const answered = answerEntry(seed(), 'a', 'He came home.', '2026-09-19');
+  assert.equal(mergeEntries(seed(), answered)[0].answer.text, 'He came home.');
+  assert.equal(mergeEntries(answered, seed())[0].answer.text, 'He came home.',
+    'and an older unanswered copy must not overwrite the testimony');
+});
+
 import { icsFor } from '../lib.js';
 
 test('the calendar file repeats daily with an alarm at the chosen time', () => {

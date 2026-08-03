@@ -1,5 +1,5 @@
 import { MOVEMENTS, releaseState, TAGS, addEntry, answerEntry,
-         testimonies, byTag, toPlainText, icsFor } from './lib.js';
+         testimonies, byTag, toPlainText, icsFor, mergeEntries } from './lib.js';
 
 // ponytail: ?fast=2 shrinks every floor to 2 seconds so the whole altar can be
 // walked in a minute. The Wait still never releases — that is not a floor.
@@ -76,6 +76,13 @@ $('#release').addEventListener('click', () => {
 $('#he-spoke').addEventListener('click', () => {
   clearInterval(tick);
   openComposer();
+});
+
+// A way to stop, not a way to hurry. It ends the session and goes home; it can
+// never carry you forward, so the floor is untouched.
+$('#leave').addEventListener('click', () => {
+  clearInterval(tick);
+  show('home');
 });
 
 let VERSIONS = {};
@@ -219,6 +226,34 @@ $('#export').addEventListener('click', () => {
 $('#make-ics').addEventListener('click', () => {
   const start = today().replaceAll('-', '');
   download('tarry.ics', icsFor($('#reminder-time').value, start), 'text/calendar');
+});
+
+// Text export is for reading. This one round-trips, so it can be restored.
+$('#backup').addEventListener('click', () => {
+  download(`tarry-backup-${today()}.json`, JSON.stringify(load()), 'application/json');
+});
+
+$('#restore-btn').addEventListener('click', () => $('#restore').click());
+
+$('#restore').addEventListener('change', async e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const note = $('#restore-note');
+  try {
+    const incoming = JSON.parse(await file.text());
+    if (!Array.isArray(incoming)) throw new Error('that file is not a Tarry backup');
+    if (incoming.some(x => !x || typeof x.id !== 'string' || typeof x.text !== 'string')) {
+      throw new Error('that file is not shaped like Tarry entries');
+    }
+    const before = load().length;
+    const merged = mergeEntries(load(), incoming);
+    save(merged);
+    renderEntries();
+    note.textContent = `Restored. ${merged.length} entries now, up from ${before}. Nothing was removed.`;
+  } catch (err) {
+    note.textContent = `Could not restore: ${err.message}`;
+  }
+  e.target.value = '';   // so choosing the same file twice still fires
 });
 
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
