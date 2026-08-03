@@ -16,13 +16,13 @@ The root of #2 is **hurry**. Hurry is the thing to kill. Everything below follow
 
 ## The premise: an anti-timer
 
-The app has no countdown, no visible clock, no "step 3 of 8", no progress bar, no streak counter. Each of those is hurry wearing a helpful face. Streaks are specifically excluded: they make you perform for software instead of waiting on a Person.
+The app has no countdown, no visible clock, no "step 3 of 9", no progress bar, no streak counter. Each of those is hurry wearing a helpful face. Streaks are specifically excluded: they make you perform for software instead of waiting on a Person.
 
 **The floor mechanic.** Entering a movement presents no way forward — no button, no gesture. After the movement's floor elapses, the continue affordance fades in slowly at the bottom of the screen. You may sit indefinitely longer. You cannot leave early.
 
 Time becomes a floor you stand on, not a budget you spend down.
 
-## The eight movements
+## The nine movements
 
 Floors lengthen through the session, mirroring how prayer warms up.
 
@@ -30,27 +30,33 @@ Floors lengthen through the session, mirroring how prayer warms up.
 |---|----------|-----------|-------|
 | 1 | Be still | *"Be still, and know that I am God."* Ps 46:10 | 1 min |
 | 2 | The Word | One passage, plainly shown. Read it slow. Read it again. | 2 min |
-| — | **Behold the King** | *"Worthy is the Lamb that was slain."* Rev 5:12. Not what He has done — who He is. | 3 min |
-| 3 | Thanksgiving | *"Enter into his gates with thanksgiving."* Ps 100:4. Name things out loud. | 3 min |
-| 4 | Search me | *"Search me, O God, and know my heart."* Ps 139:23. Don't dig — let Him bring it up. | 3 min |
-| 5 | Confess & release | Name it plainly. Then forgive whoever is owed — *"when ye stand praying, forgive."* Mk 11:25 | 3 min |
-| 6 | Intercession | Your people, your list, one at a time. | 5 min |
-| 7 | Tongues / soaking | Pray in the Spirit. Screen goes dark. | 8 min |
-| 8 | **Wait** | *"They that wait upon the LORD shall renew their strength."* Isa 40:31 | **none** |
+| 3 | Behold the King | *"Worthy is the Lamb that was slain."* Rev 5:12. Not what He has done — who He is. Tell Him. | 3 min |
+| 4 | Thanksgiving | *"Enter into his gates with thanksgiving."* Ps 100:4. Name things out loud. | 3 min |
+| 5 | Search me | *"Search me, O God, and know my heart."* Ps 139:23. Don't dig — let Him bring it up. | 3 min |
+| 6 | Confess & release | Name it plainly. Then forgive whoever is owed — *"when ye stand praying, forgive."* Mk 11:25 | 3 min |
+| 7 | Intercession | Your people, your list, one at a time. | 5 min |
+| 8 | Tongues / soaking | Pray in the Spirit. Screen goes dark. | 8 min |
+| 9 | **Wait** | *"They that wait upon the LORD shall renew their strength."* Isa 40:31 | **none** |
 
-Total floor before waiting: 28 minutes. Movements are renumbered by their order in the array; the table above lists them in order.
+Total floor before waiting: 28 minutes.
 
-### Movement 5 — the release detail
+Movement 3 exists because the rest of the altar is largely about what He does — gives, forgives, answers, speaks. This one is only about who He is. Adoration sits after the Word so that it responds to something just seen, and before Thanksgiving so that praise leads rather than follows gratitude.
 
-When movement 5's floor lifts, the word *continue* does **not** appear. The promise does:
+### Movement 6 — the release detail
+
+When movement 6's floor lifts, the word *continue* does **not** appear. The promise does:
 
 > *"If we confess our sins, he is faithful and just to forgive us our sins, and to cleanse us from all unrighteousness."* — 1 John 1:9
 
 Tapping the promise advances. You leave that movement washed, not condemned.
 
-### Movement 8 — no exit
+### Movement 9 — no exit
 
-Movement 8 has no continue affordance at any point. The only element is **"He spoke"** — small, bottom of screen — which opens the journal composer with the mic ready. You leave by closing the app. Nothing else ends the session.
+Movement 9 has no continue affordance at any point. The only element is **"He spoke"** — small, bottom of screen — which opens the journal composer with the mic ready.
+
+### Ending a session
+
+A quiet **"End for now"** sits in the corner of every movement. It ends the session and returns home — it can never advance you to the next movement, so the floor is untouched. Stopping is always permitted; hurrying never is. Without it the app traps someone who genuinely has to go, and an altar you cannot leave is a cage, not a discipline.
 
 ### Configurability
 
